@@ -4,7 +4,7 @@ import openai
 import json
 
 def ask_openai(message):
-    with open('apikeys.json', 'r') as file_to_read:
+    with open('api.json', 'r') as file_to_read:
         json_data = json.load(file_to_read)
         openai.api_key = json_data["openai_api_key"]
         
