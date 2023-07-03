@@ -12,6 +12,12 @@ from pygments.formatters import HtmlFormatter
 
 from django.utils import timezone
 
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+
+# tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
+# model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
+# chatbot = pipeline("text-generation", model=model, tokenizer=tokenizer)
+
 def ask_openai(message):
     with open('api.json', 'r') as file_to_read:
         json_data = json.load(file_to_read)
@@ -34,10 +40,8 @@ def ask_openai(message):
         ]     
     )
     answer = response.choices[0].message.content.strip()
-    print("\n" + answer + "\n")
-    formatter = HtmlFormatter()
-    code_html = highlight(answer, PythonLexer(), formatter)
-    return code_html
+    formatted_ans = highlight(answer, PythonLexer(), HtmlFormatter())
+    return formatted_ans
     
 # Create your views here.
 def chatbot(request):

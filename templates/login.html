@@ -71,7 +71,7 @@
 {% block content %}
 <div class="login-container">
   <div class="card">
-    <div class="card-header">Login</div>
+    <div class="card-header">Sheryl</div>
     <div class="card-body">
       {% if error_message %}
         <div class="alert alert-danger" role="alert">{{ error_message }}</div>
@@ -86,6 +86,7 @@
           <label for="password">Password</label>
           <input type="password" class="form-control" id="password" name="password" required>
         </div>
+        <a>Don't have an account?</a> <a style="color: blue" href="register">Sign up</a>
         <button type="submit">Login</button>
       </form>
     </div>
