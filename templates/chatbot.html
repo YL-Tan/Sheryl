@@ -67,7 +67,7 @@
 {% block content %}
 <div class="chat-container">
   <div class="card flex-grow-1">
-    <div class="card-header bg-primary text-white">Chat</div>
+    <div class="card-header bg-primary text-white">Sheryl</div>
     {% if user.is_authenticated %}
     <div class="card-header bg-primary text-white"><b>Welcome, {{user.username}} </b><a style="color: yellow" href="logout">Logout</a></div>
 
@@ -77,17 +77,33 @@
     <div class="card-body messages-box">
       
       <ul class="list-unstyled messages-list">
-        
-        <li class="message received">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>Sheryl</b>
-            </div>
-            <div class="message-content">
-              Hi {{user.username}}, I am Sheryl, you can ask me anything.
-            </div>
-          </div>
-        </li>
+
+        {% for chat in chats %}
+          {% if chat.user == request.user %}<!-- Extra security check: make sure user that is currently logged in, so we can show. 
+                                            to ensure that there's no data leak or no problem in showing the right message to the right user. -->
+            <li class="message sent">
+              <div class="message-text">
+                <div class="message-sender">
+                  <b>You</b>
+                </div>
+                <div class="message-content">
+                  {{chat.message}}
+                </div>
+              </div>
+            </li>   
+            
+            <li class="message received">
+              <div class="message-text">
+                <div class="message-sender">
+                  <b>Sheryl</b>
+                </div>
+                <div class="message-content">
+                  {{chat.response | safe }}
+                </div>
+              </div>
+            </li>
+          {% endif %}
+        {% endfor %}
 
         <!-- Here is where the user's message will be appended -->
       </ul>
