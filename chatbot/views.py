@@ -1,16 +1,15 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-import openai
-import json
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.utils import timezone
+import json
+import openai
 from .models import Chat
 
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
-
-from django.utils import timezone
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
@@ -43,7 +42,6 @@ def ask_openai(message):
     formatted_ans = highlight(answer, PythonLexer(), HtmlFormatter())
     return formatted_ans
     
-# Create your views here.
 def chatbot(request):
     chats = Chat.objects.filter(user=request.user)  # filter to get the current logged in user
     
