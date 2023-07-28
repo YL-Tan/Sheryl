@@ -4,7 +4,7 @@ This project is still under construction.
 
 ## Description
 
-Sheryl is an interactive, intelligent chatbot powered by GPT-4. It can handle general conversation and generate responses in real-time.
+Sheryl is an interactive, intelligent chatbot powered by GPT-3.5. It can handle general conversation and generate responses in real-time.
 
 ## Features
 
