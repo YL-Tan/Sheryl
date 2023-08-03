@@ -7,15 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from .models import Chat
 
-from pygments import highlight
-from pygments.lexers import PythonLexer
-from pygments.formatters import HtmlFormatter
-
 def chatbot(request):
-    # if not request.session.session_key:
-    #     request.session.create()
-    
-    # context = {'sessionId': request.session.session_key}
     chats = Chat.objects.filter(user=request.user)  # filter to get the chats history for the current logged in user
     token, created = Token.objects.get_or_create(user=request.user)
     

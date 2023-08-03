@@ -14,17 +14,14 @@ class ChatViewSetTest(TestCase):
 
         self.valid_payload_without_sys_msg = {
             'message': 'Hi there',
-            # 'session': self.session.id,
             'history': [],
         }
         self.valid_payload = {
             'message': 'What is the weather like today?',
-            # 'session': self.session.id,
             'history': [{'role': 'system', 'message': 'You are a helpful assistant.', 'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}],
         }
         self.invalid_payload = {
             'message': 'What is the weather like today?',
-            # 'session': 123456,
             'history': 'System: You are a helpful assistant.',
         }
 
@@ -49,10 +46,6 @@ class ChatViewSetTest(TestCase):
             self.assertIn(expected_item, actual_items)
         
         self.assertEqual(response.status_code, 201)
-        
-    # def test_create_chat_invalid_session(self):
-    #     response = self.client.post('/api/chat/', self.invalid_payload, format='json')
-    #     self.assertEqual(response.status_code, 404)
 
 def format_json_data(response_data):
     return json.dumps(response_data, indent=4)

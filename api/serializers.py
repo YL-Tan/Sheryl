@@ -10,7 +10,6 @@ from chatbot.models import Chat
 class ChatSerializer(serializers.ModelSerializer):  #inheriting from the ModeSerializer class
     response = serializers.CharField(allow_blank=True, default='') 
     user = serializers.StringRelatedField()
-    # session = serializers.StringRelatedField()
     history = serializers.JSONField(default=list)
     
     class Meta:

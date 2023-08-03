@@ -13,15 +13,6 @@ class ChatViewSet(viewsets.ViewSet):
         serializer = ChatSerializer(data=request.data)
         
         if serializer.is_valid():
-            # session_id = request.data.get('session')
-            # try:
-            #     session = ChatSession.objects.get(session_id=session_id)
-            #     # Ensure the sesion belongs to the current user
-            #     if session.user != request.user:
-            #         return Response({'detail': 'Invalid session'}, status=400)
-            # except ChatSession.DoesNotExist:
-            #     return Response({'detail': 'Session not found'}, status=404)
-
             message = serializer.validated_data.get('message')
             history = serializer.validated_data.get('history', [])
             chatbot_response = get_chatbot_response(history, message)
