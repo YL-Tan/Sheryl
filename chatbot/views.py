@@ -3,56 +3,23 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.utils import timezone
-import json
-import openai
+from rest_framework.authtoken.models import Token
+
 from .models import Chat
 
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-
-# tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-# model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
-# chatbot = pipeline("text-generation", model=model, tokenizer=tokenizer)
-
-def ask_openai(message):
-    with open('api.json', 'r') as file_to_read:
-        json_data = json.load(file_to_read)
-        openai.api_key = json_data["openai_api_key"]
-        
-    # response = openai.Completion.create(
-    #     model = "text-curie-001",
-    #     prompt = message,
-    #     max_tokens = 150,
-    #     n = 1,
-    #     stop = None,
-    #     temperature = 0.7,
-    # )
-    
-    response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo",
-        messages = [
-            {"role": "system", "content": "You are an helpful assistant."},
-            {"role": "user", "content": message},
-        ]     
-    )
-    answer = response.choices[0].message.content.strip()
-    formatted_ans = highlight(answer, PythonLexer(), HtmlFormatter())
-    return formatted_ans
-    
 def chatbot(request):
-    chats = Chat.objects.filter(user=request.user)  # filter to get the current logged in user
+    # if not request.session.session_key:
+    #     request.session.create()
     
-    if request.method == 'POST':
-        message = request.POST.get('message')
-        response = ask_openai(message)
+    # context = {'sessionId': request.session.session_key}
+    chats = Chat.objects.filter(user=request.user)  # filter to get the chats history for the current logged in user
+    token, created = Token.objects.get_or_create(user=request.user)
     
-        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
-        chat.save()
-        return JsonResponse({'message': message, 'response': response})
-    return render(request, 'chatbot.html', {'chats': chats})
+    return render(request, 'chatbot.html', {'chats': chats, 'token': token.key})    # django will go /templates and fetch the specified file; chats (:type list) are from the sqlite database
 
 def login(request):
     if request.method == 'POST':
@@ -80,15 +47,13 @@ def register(request):
             try:
                 user = User.objects.create_user(username, email, password2)
                 user.save()
-                auth.login(request, user)
-                return redirect('chatbot')
+                return redirect('login')
             except:
                 error_message = "Failed to create your account"
                 return render(request, "register.html", {'error_message': error_message})
         else:
             error_message = 'Passwords did not match'
             return render(request, 'register.html', {'error_message': error_message})
-        
     return render(request, "register.html")
 
 def logout(request):

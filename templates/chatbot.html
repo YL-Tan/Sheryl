@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block title %}Sheryl{% endblock %}
+
 {% block styles %}
 <style>
     body, html {
@@ -49,6 +51,7 @@
       flex: 1;
       border-radius: 0;
       border-right: none;
+      resize: none;
     }
 
     .btn-send {
@@ -97,14 +100,14 @@
                   <b>Sheryl</b>
                 </div>
                 <div class="message-content">
-                  {{chat.response | safe }}
+                  {{chat.response}}
                 </div>
               </div>
             </li>
           {% endif %}
         {% endfor %}
 
-        <!-- Here is where the user's message will be appended -->
+        <!-- Here is where the user's message (messageItem) will be appended -->
       </ul>
     </div>
     <br><br>
@@ -114,7 +117,7 @@
   <form class="message-form">
     {%csrf_token%}
     <div class="input-group">
-      <input type="text" class="form-control message-input" placeholder="Type your message...">
+      <textarea class="form-control message-input" placeholder="Type your message..."></textarea>
       <div class="input-group-append">
         <button type="submit" class="btn btn-primary btn-send">Send</button>
       </div>
@@ -123,10 +126,23 @@
 </div>
 
 <script>
+  //var sessionId = "{{ sessionId|escapejs }}"; // prevent potential cross-site scripting (XSS) attacks
+  const token = "{{ token }}"; 
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
   const messageInput = document.querySelector('.message-input');
   
+  messageInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      if (!event.shiftKey) {
+        event.preventDefault();
+        // If the Shift key is not being pressed, submit the form.
+        messageForm.dispatchEvent(new Event('submit'));
+      }
+      // If Shift is being pressed along with Enter, let the default happen (newline).
+    }
+  });
+
   messageForm.addEventListener('submit', (event) => {
     event.preventDefault();   // prevent refreshing the current page when the submit button is clicked
 
@@ -134,6 +150,7 @@
     if (message.length === 0) {
       return;
     }
+    console.log(message);
 
     const messageItem = document.createElement('li');
     messageItem.classList.add('message', 'sent');
@@ -150,17 +167,22 @@
 
     messageInput.value = '';
 
-    fetch('', {    
+    fetch('/api/chat/', {    
       method: 'POST',
-      headers: {  'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': message
+      headers: {  'Content-Type': 'application/json', 
+                  'Authorization': 'Token ' + token,
+                  'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify({
+        'message': message,
       })
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) { throw new Error(response.status) }
+        return response.json()
+      })
       .then(data => {
-        const response = data.response;
+        const response = data.response;       // data is passed back from the service
         const messageItem = document.createElement('li');
         messageItem.classList.add('message', 'received');
         messageItem.innerHTML = `
@@ -174,7 +196,9 @@
         </div>
         `;
         messagesList.appendChild(messageItem);
-      });
+      
+      })
+      .catch(error => console.error('Error:', error));
   });
 </script>
 {% endblock %}
