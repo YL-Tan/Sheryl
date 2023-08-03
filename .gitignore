@@ -1,5 +1,3 @@
-api.json
 db.sqlite3
-Sheryl/chatbot/*
 *__pycache__/
 *migrations/
