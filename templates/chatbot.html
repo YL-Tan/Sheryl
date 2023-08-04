@@ -1,11 +1,98 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Sheryl{% endblock %}
 
 {% block styles %}
 <style>
-    body, html {
+    :root {
+      --color-primary: #272727;
+      --color-secondary: #f4a261;
+      --color-white: #ffffff;
+      --color-black: #000;
+      --color-grey0: #f8f8f8;
+      --color-grey-1: #dbe1e8;
+      --color-grey-2: #b2becd;
+      --color-grey-3: #6c7983;
+      --color-grey-4: #454e56;
+      --color-grey-5: #1c1c1c;
+      --color-grey-6: #12181b;
+      --box-shadow-1: 0 3px 15px rgba(0, 0, 0, 0.5);
+    }
+    
+    .light-mode {
+      --color-primary: #ffffff;
+      --color-secondary: #f793b1;
+      --color-white: #454e56;
+      --color-black: #000;
+      --color-grey0: #f8f8f8;
+      --color-grey-1: #6c7983;
+      --color-grey-2: #6c7983;
+      --color-grey-3: #6c7983;
+      --color-grey-4: #454e56;
+      --color-grey-5: #f8f8f8;
+      --color-grey-6: #12181b;
+    }
+
+    .theme-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      top: 5%;
+      right: 3%;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: var(--color-grey-4);
+      cursor: pointer;
+      position: fixed;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.1s ease-in-out;
+    }
+    .theme-btn:active {
+      transform: translateY(-3px);
+    }
+    .theme-btn i {
+      font-size: 1.4rem;
+      color: var(--color-grey-2);
+      pointer-events: none;
+    }
+    .theme-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: -150px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 4px 8px;
+      background-color: black;
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    
+    .theme-btn:hover::after {
+      opacity: 1;
+    }
+
+    html {
       height: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    .message-content {
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    @keyframes fade-in-move-up {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .messages-box {
@@ -17,24 +104,33 @@
       padding-left: 0;
     }
 
-    .message {
-      margin-bottom: 15px;
-      list-style: none;
-    }
-
     .message-text {
-      padding: 10px;
+      padding: 15px;
       border-radius: 5px;
+      max-width: 80%;
     }
-
+    
+    .message-sender {
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
     .sent {
-      background-color: #dcf8c6;
-      align-self: flex-end;
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+        align-self: flex-end;
     }
-
+    
     .received {
-      background-color: #f1f0f0;
-      align-self: flex-start;
+        background-color: var(--color-grey-2);
+        color: var(--color-black);
+        align-self: flex-start;
+    }
+    
+    /* For animations (consider adding more animations based on your needs) */
+    .message {
+      opacity: 0;
+      animation: fade-in-move-up 0.3s forwards;
     }
 
     .message-form {
@@ -55,13 +151,38 @@
     }
 
     .btn-send {
-      border-radius: 0;
+      background-color: var(--color-secondary) !important;
+      border: 1px solid var(--color-grey-6);
+      border-radius: 5px;
+    }
+    .btn-send i {
+      font-size: 1.4rem;
+      color: var(--color-white);
+      pointer-events: none;
     }
 
     .chat-container {
       height: 100%;
       display: flex;
       flex-direction: column;
+    }
+    .message-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    .card-header{
+      font-family: 'Segoe UI', sans-serif;
+      color: var(--color-white);
+      background-color: var(--color-secondary) !important;
+    }
+
+    @media (max-width: 600px) {
+      .message-avatar {
+        width: 40px;
+        height: 40px;
+      }
     }
   </style>
 {% endblock %}
@@ -71,10 +192,10 @@
 <div class="chat-container">
   <div class="card flex-grow-1">
     {% if user.is_authenticated %}
-    <div class="card-header bg-primary text-white"><b>Welcome, {{user.username}} </b><a style="color: yellow" href="logout">Logout</a></div>
+    <div class="card-header"><b>Welcome, {{user.username}} </b><a style="color: blue" href="logout">Logout</a></div>
 
     {% else %}
-    <div class="card-header bg-primary text-white"><a style="color: yellow" href="login">Login</a>   <a style="color: yellow" href="register">Register</a></div>
+    <div class="card-header"><a style="color: blue" href="login">Login</a>   <a style="color: blue" href="register">Register</a></div>
     {% endif %}
     <div class="card-body messages-box">
       
@@ -86,6 +207,7 @@
             <li class="message sent">
               <div class="message-text">
                 <div class="message-sender">
+                  <img class="message-avatar" src="{% static 'images/avatar.jpg' %}" alt="avatar">
                   <b>You</b>
                 </div>
                 <div class="message-content">
@@ -119,19 +241,31 @@
     <div class="input-group">
       <textarea class="form-control message-input" placeholder="Type your message..."></textarea>
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">Send</button>
+        <button type="submit" class="btn btn-send"><i class="fa fa-paper-plane"></i></button>
       </div>
     </div>
   </form>
+  <div class="theme-btn" data-tooltip="Dark Mode">
+    <i class="fas fa-adjust"></i>
+  </div>
 </div>
 
 <script>
-  //var sessionId = "{{ sessionId|escapejs }}"; // prevent potential cross-site scripting (XSS) attacks
   const token = "{{ token }}"; 
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
   const messageInput = document.querySelector('.message-input');
-  
+  const themeBtn = document.querySelector('.theme-btn');
+
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle("light-mode");
+    if (document.body.classList.contains('light-mode')) {
+        themeBtn.setAttribute('data-tooltip', 'Light Mode');
+    } else {
+        themeBtn.setAttribute('data-tooltip', 'Dark Mode');
+    }
+  });
+
   messageInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       if (!event.shiftKey) {
@@ -157,6 +291,7 @@
     messageItem.innerHTML = `
       <div class="message-text">
         <div class="message-sender">
+            <img class="message-avatar" src="{% static 'images/avatar.jpg' %}" alt="avatar">
             <b>You</b>
         </div>
         <div class="message-content">
