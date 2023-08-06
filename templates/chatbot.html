@@ -20,17 +20,17 @@
     }
     
     .light-mode {
-      --color-primary: #ffffff;
-      --color-secondary: #f793b1;
-      --color-white: #454e56;
-      --color-black: #000;
-      --color-grey0: #f8f8f8;
-      --color-grey-1: #6c7983;
-      --color-grey-2: #6c7983;
-      --color-grey-3: #6c7983;
-      --color-grey-4: #454e56;
-      --color-grey-5: #f8f8f8;
-      --color-grey-6: #12181b;
+      --color-primary: #fdf5f5;         
+      --color-secondary: #ffc1e3;       
+      --color-white: #1c1c1c;           
+      --color-black: #ffffff;            
+      --color-grey0: #ffeff0;           
+      --color-grey-1: #ffd5e6;          
+      --color-grey-2: #ffaccf;           
+      --color-grey-3: #f57f9d;          
+      --color-grey-4: #ec5b7d;         
+      --color-grey-5: #f9e2e5;           
+      --color-grey-6: #edebe4;              
     }
 
     .theme-btn {
@@ -86,6 +86,7 @@
     .message-content {
       margin-top: 10px;
       line-height: 1.4;
+      color: var(--color-white);
     }
 
     @keyframes fade-in-move-up {
@@ -116,15 +117,16 @@
     }
     
     .sent {
-        background-color: var(--color-secondary);
+        background-color: var(--color-grey-3);
         color: var(--color-white);
         align-self: flex-end;
     }
     
     .received {
-        background-color: var(--color-grey-2);
-        color: var(--color-black);
+        background-color: var(--color-grey-4);
+        color: var(--color-white);
         align-self: flex-start;
+        
     }
     
     /* For animations (consider adding more animations based on your needs) */
@@ -140,7 +142,7 @@
       left: 0;
       right: 0;
       padding: 10px;
-      background-color: #f8f9fa;
+      background-color: var(--color-grey-4);
     }
 
     .message-input {
@@ -151,13 +153,13 @@
     }
 
     .btn-send {
-      background-color: var(--color-secondary) !important;
+      background-color: var(--color-grey-3); !important;
       border: 1px solid var(--color-grey-6);
       border-radius: 5px;
     }
     .btn-send i {
       font-size: 1.4rem;
-      color: var(--color-white);
+      color: var(--color-grey0);
       pointer-events: none;
     }
 
@@ -175,7 +177,10 @@
     .card-header{
       font-family: 'Segoe UI', sans-serif;
       color: var(--color-white);
-      background-color: var(--color-secondary) !important;
+      background-color: var(--color-grey-3) !important;
+    }
+    .card-body{
+      background-color: var(--color-grey-5) !important;
     }
 
     @media (max-width: 600px) {
@@ -232,14 +237,12 @@
         <!-- Here is where the user's message (messageItem) will be appended -->
       </ul>
     </div>
-    <br><br>
-    <br><br>
-    <br><br>
+    <br><br><br>
   </div>
   <form class="message-form">
     {%csrf_token%}
     <div class="input-group">
-      <textarea class="form-control message-input" placeholder="Type your message..."></textarea>
+      <textarea class="form-control message-input" placeholder="Send a message..."></textarea>
       <div class="input-group-append">
         <button type="submit" class="btn btn-send"><i class="fa fa-paper-plane"></i></button>
       </div>
@@ -295,7 +298,7 @@
             <b>You</b>
         </div>
         <div class="message-content">
-          ${message}
+          ${message.replace(/\n/g, '<br/>')}
         </div>
       </div>`;
     messagesList.appendChild(messageItem);
